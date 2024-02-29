@@ -1,0 +1,16 @@
+{% extends "flatpages/default.html" %}
+
+{% block content %}
+    <div class="features">
+        <h1>Создание нового объявления</h1>
+
+        <form action="{% url 'article_create' %}" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.category }}<br><br>
+            {{ form.title }}<br>
+            {{ form.media }}<br>
+            {{ form.text }}<br>
+            <button class="btn btn-success" type ="submit">Создать объявление</button>
+        </form>
+    </div>
+{% endblock %}

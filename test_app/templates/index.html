@@ -1,0 +1,8 @@
+{% extends 'flatpages/default.html' %}
+{% block content %}
+  <h1>Список всех Статей :</h1>
+  {% for article in article %}
+    <h2>{{ article.title }}</h2>
+    <p>{{ article.content }}</p>
+  {% endfor %}
+{% endblock %}

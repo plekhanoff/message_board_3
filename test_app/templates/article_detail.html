@@ -1,0 +1,23 @@
+<!-- article_detail.html -->
+{% extends 'base.html' %}
+{% block content %}
+  <h1>{{ article.title }}</h1>
+  <p>{{ article.content }}</p>
+
+  <h2>Comments</h2>
+  <ul>
+    {% for comment in comments %}
+      <li>{{ comment.text }}</li>
+      {% if not comment.read %}
+        <a href="{% url 'read_comment' comment.id %}">Mark as read</a>
+      {% endif %}
+    {% endfor %}
+  </ul>
+
+  <h2>Add a Comment</h2>
+  <form method="post">
+    {% csrf_token %}
+    <textarea name="text"></textarea>
+    <button type="submit">Submit Comment</button>
+  </form>
+{% endblock %}

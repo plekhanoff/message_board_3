@@ -1,0 +1,13 @@
+{% extends 'flatpages/default.html' %}
+
+{% block content %}
+  <h1>Страница профиля  {{ request.user.username }}</h1>
+  <p>Доброе время суток! Уважаемый {{ request.user.username }}!</p>
+
+  <h2>Список созданных статей</h2>
+  <ul>
+  {% for article in articles %}
+    <li><a href="{% url 'article_detail' article.pk %}">{{ article.title }}</a></li>
+  {% endfor %}
+  </ul>
+{% endblock %}
