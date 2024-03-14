@@ -2,6 +2,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.models import BaseUserManager
+from django.urls import reverse
 
 
 class CustomUserManager(BaseUserManager):
@@ -36,8 +37,9 @@ class Article(models.Model):
     media = models.FileField(upload_to='media/', default='default.png')
 
     def __init__(self, *args, **kwargs):
-        super().__init__(args, kwargs)
-        self.id = None
+        super().__init__(*args, **kwargs)
+        self.request = id
+        self.id = id
 
     def preview(self):
         preview = f'{self.text[0:123]} + "..."'
@@ -47,11 +49,11 @@ class Article(models.Model):
         return self.title
 
     def get_absolute_url(self):
-        return f'/test_app/{self.id}/'
+        return reverse('article_detail', kwargs={'pk': self.pk})
 
     def save(self, *args, **kwargs):
         if not self.author:
-            self.author = User.objects.get(username='username')
+            self.author = self.author if self.author else self.request.user
         super().save(*args, **kwargs)
 
 
@@ -63,8 +65,24 @@ class UserResponse(models.Model):
 
 
 class Comment(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    article = models.ForeignKey(Article, on_delete=models.CASCADE)
-    text = models.TextField()
-    created_at = models.DateTimeField(auto_now_add=True)
+    objects = None
+    commentUser = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='автор')
+    commentArticle = models.ForeignKey(Article, on_delete=models.CASCADE, verbose_name='комментарий')
+    text = models.TextField(verbose_name='коммент')
+    created_at = models.DateTimeField(auto_now_add=True,verbose_name='время создания')
+    status = models.BooleanField(default=False, verbose_name='статус')
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(args, kwargs)
+        self.commentArticle_id = None
+
+    def __str__(self):
+        return f'{self.commentUser} : {self.text} [:20] + ...'
+
+    def get_absolute_url(self):
+        return reverse('article_detail',kwargs={'pk' : self.commentArticle_id })
+
+    class Meta:
+        verbose_name = 'комментарий'
+        verbose_name_plural = 'комментарий'
+        ordering = ['id']
