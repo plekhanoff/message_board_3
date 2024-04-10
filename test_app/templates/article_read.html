@@ -1,0 +1,51 @@
+
+{% extends 'flatpages/default.html' %}
+{% block content %}
+{% block title %}
+  <h1>{{ article.title }}</h1>
+{% endblock title %}
+    <h3><b>статья {{ article_id }}</b></h3>
+    <hr>
+    <hr>
+    <h5> объявление : "{{ article.title }}"</h5>
+
+    {% if article %}
+    <table>
+        <tr>
+            <td><b>файл</b></td>
+            <td><b>Заголовок</b></td>
+            <td><b>превью</b></td>
+            <td><b>дата</b></td>
+            <td><b>категория</b></td>
+        </tr>
+        <tr>
+            {% if article.upload %}
+            <td><img scr="{{ article.uploads.url }}" width="100" height="100"></td>
+            {% else %}
+                <td> - </td>
+            {% endif %}
+
+            <td>{{ article.title }}</td>
+            <td>{{ article.text }}</td>
+            <td>{{ article.get_category_display }}</td>
+        </tr>
+    </table>
+{% else %}
+    <h5> Статей пока нет...</h5>
+    <h7> Напишите свою </h7>
+{% endif %}
+  <h2>Оставьте отклик</h2>
+  <form action= "{% url 'comment_create' article_id %}" method="post">
+    {% csrf_token %}
+      {{ form }}
+    <textarea name="text"></textarea>
+    <button type="submit">Отправить отклик</button>
+  </form>
+{% if article.comment_self.all %}
+    <h4> вся рефлекcия :</h4>
+    {% for comment in article.comment_set.all %}
+    <p> {{ comment.commentUser.username }}</p>
+    <p>{{ comment.text }}</p>
+    {% endfor %}
+    {% endif %}
+{% endblock %}
