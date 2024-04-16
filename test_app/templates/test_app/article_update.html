@@ -1,0 +1,18 @@
+{% extends 'flatpages/default.html' %}
+{% block content %}
+<head>
+    <title>Доработка объявление</title>
+</head>
+<body>
+    <h1>доработка объявления</h1>
+    <form action="{% url 'article_update' pk=article.pk %}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+         {{ form.category }}<br><br>
+            {{ form.title }}<br>
+            {{ form.media }}<br>
+            {{ form.text }}<br>
+        <button type="submit">Внести изменения</button>
+    </form>
+</body>
+{% endblock %}
+

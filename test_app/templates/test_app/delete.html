@@ -1,0 +1,9 @@
+{% extends 'flatpages/default.html' %}
+{% block content %}
+  <h1>Требуется подтвеждение для удаления статьи</h1>
+  <p>Подтвердите,что находясь в здравом уме и твёрдой памяти хотите удалить статью</p>
+  <form method="post">
+    {% csrf_token %}
+    <button type="submit">Подтверждаю</button>
+  </form>
+{% endblock %}

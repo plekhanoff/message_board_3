@@ -1,0 +1,15 @@
+{% extends 'flatpages/default.html' %}
+{% block content %}
+    <h1>Список всех Статей :</h1>
+<div class="index_articles">
+   {% for article in articles %}
+       <div class="index_article">
+        <h3><a href="{% if article.pk %}{% url 'article_read' pk=article.pk %}{% endif %}">{{ article.title }}</a></h3>
+        <p>{{ article.content }}</p>
+       </div>
+   {% endfor %}
+</div>
+{% endblock %}
+
+
+

@@ -1,0 +1,19 @@
+{% extends 'flatpages/default.html' %}
+{% block content %}
+<html lang="es-Es">
+<head>
+    <title>cmment</title>
+</head>
+<body>
+
+<h1>Ваш комментарий </h1>
+
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+
+    <button type="submit">Отправить</button>
+</form>
+</body>
+</html>
+{% endblock %}

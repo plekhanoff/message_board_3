@@ -1,0 +1,54 @@
+
+{% extends 'flatpages/default.html' %}
+{% block content %}
+{% block title %}
+  <h1>{{ article.title }}</h1>
+{% endblock title %}
+    <h3><b>статья {{ article_id }}</b></h3>
+    <hr>
+    <hr>
+    {% if article %}
+    <table>
+        <tr>
+            <td><b>файл</b></td>
+            <td><b>текст</b></td>
+            <td><b>категория</b></td>
+            <td><b>действия</b></td>
+        </tr>
+        <tr>
+            {% if article.media %}
+            <td><img src="{{ article.media.url }}" width="400" height="400" alt="400"></td>
+            {% endif %}
+            <td>{{ article.text }}</td>
+            <td>{{ article.get_category_display }}</td>
+            <td>
+                {% if Article.author == request.user.author %}
+                <a href="{% url 'article_update' pk=article_id %}"><button><small> Изменить </small></button></a>
+                     {% endif %}
+                {% if Article.author == request.user.author %}
+                <a href="{%  url 'delete' pk=article_id %}"><button><small> Удалить </small></button></a>
+                    {% endif %}
+            </td>
+
+        </tr>
+    </table>
+{% else %}
+    <h5> Статей пока нет...</h5>
+    <h7> Напишите свою </h7>
+{% endif %}
+  <h2>Оставьте отклик</h2>
+  <form action= "{% url 'comment_create' article_id %}" method="post">
+    {% csrf_token %}
+      {{ form }}
+    <button type="submit">Отправить отклик</button>
+  </form>
+{% if article.comment_set.all %}
+    <h5> Все комментарии :</h5>
+    {% for comment in article.comment_set.all %}
+        <p>Автор комментария: {{ comment.commentUser.username }}</p>
+        <h5><a href="{% if comment.pk %}{% url 'comment_edit' pk=comment.pk %}{% endif %}">{{ comment.text }}</a></h5>
+    {% endfor %}
+{% endif %}
+{% endblock content %}
+
+

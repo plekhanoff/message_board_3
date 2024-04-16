@@ -1,0 +1,20 @@
+{% extends 'flatpages/default.html' %}
+{% block content %}
+<head>
+    <title>Доработка комментария</title>
+</head>
+<body>
+
+    <h1>Панель комментария</h1>
+    <td>
+        {% csrf_token %}
+        {{ form.as_p }}
+         {% if comment.author == request.user.author %}
+                <a href="{%  url 'comment_delete' pk=comment_id %}"><button><small> Удалить </small></button></a>
+                    {% endif %}
+        <button type="submit">Внести изменения</button>
+    </td>
+</body>
+{% endblock %}
+
+
