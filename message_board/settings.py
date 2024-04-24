@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/5.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.0/ref/settings/
 """
-
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -42,7 +42,7 @@ INSTALLED_APPS = [
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
-    'allauth.socialaccount.providers.google',
+    'allauth.socialaccount.providers.yandex',
 
     'test_app',
 
@@ -104,15 +104,18 @@ LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'profile'
 LOGOUT_REDIRECT_URL = 'signup'
 
-ACCOUNT_EMAIL_UNIQUE = True
+ACCOUNT_FORMS = {'signup': 'test_app.forms.CommonSignupForm'}
+ACCOUNT_EMAIL_UNIQUE = False
 ACCOUNT_EMAIL_CONFIRMATION_REQUIRED = True
-ACCOUNT_EMAIL_VERIFICATION = False
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_EMAIL_VERIFICATION = 'none'
+ACCOUNT_AUTHENTICATION_METHOD = "email"
 
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-DEFAULT_FROM_EMAIL = "message_board@yandex.ru"
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+DEFAULT_FROM_EMAIL = "fertikschloss@yandex.ru"
 EMAIL_HOST = 'smtp.yandex.ru'
 EMAIL_PORT = 465
-EMAIL_HOST_USER = "message_board"
+EMAIL_HOST_USER = "fertikschloss@yandex.ru"
 EMAIL_HOST_PASSWORD = "kvlxzxebslvwccby"
 EMAIL_USE_SSL = True
 
@@ -149,7 +152,8 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATIC_ROOT = 'static/'
-STATICFILES_DIRS = ['/static/']
+STATIC_FILES_DIRS = BASE_DIR / 'static'
+STATIC_DIR = os.path.join(BASE_DIR / 'static')
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = 'media/'

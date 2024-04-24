@@ -13,7 +13,7 @@ from .models import Article, Comment
 class CommonSignupForm(SignupForm):
     def save(self, request):
         user = super(CommonSignupForm, self).save(request)
-        user.is_active = False
+        user.is_active = True
         code = ''.join(random.sample(hexdigits, 5))
         user.code = code
         send_mail(
@@ -38,13 +38,20 @@ class ArticleForm(ModelForm):
 
 
 class CommentForm(forms.ModelForm):
-
     class Meta:
         model = Comment
         fields = ['text']
         labels = {'text': 'Введите текст'}
-        widgets = {'text': forms.Textarea(attrs={'class': 'form-text', 'cols': 100, 'rows': 3})}
+        widgets = {'text': forms.Textarea(attrs={'class': 'form-text', 'cols': 100, 'rows': 10})}
 
-    def save(self, commit):
-        pass
 
+class ArticleDeleteForm(forms.ModelForm):
+    class Meta:
+        model = Article
+        fields = ['title', 'text', 'category', 'media']
+
+
+class CommentDeleteForm(forms.ModelForm):
+    class Meta:
+        model = Comment
+        fields = ['text']
