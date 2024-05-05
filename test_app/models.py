@@ -24,9 +24,24 @@ class CustomUserManager(BaseUserManager):
 
 class User(AbstractUser):
     code = models.CharField(max_length=8, blank=True, null=True)
-    email = models.EmailField(verbose_name='Email', max_length=60, unique=True)
+    email = models.EmailField(verbose_name='Email', max_length=60, unique=False)
     username = models.CharField(verbose_name='Имя пользователя', max_length=30, unique=True)
+    is_admin = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=True)
     objects = CustomUserManager()
+
+    def __str__(self):
+        return self.email
+
+    def has_perm(self, perm, obj=None):
+        return self.is_admin
+
+    def has_module_perms(self, app_label):
+        return True
+
+    @property
+    def is_staff(self):
+        return self.is_admin
 
 
 class Article(models.Model):

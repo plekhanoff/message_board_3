@@ -28,6 +28,7 @@ def logout_view(request):
 class ConfirmUser(UpdateView):
     model = User
     context_object_name = 'confirm_user'
+    fields = ['code']
 
     def post(self, request, *args, **kwargs):
         if 'code' in request.POST:
@@ -37,15 +38,17 @@ class ConfirmUser(UpdateView):
                 user.update(code=None)
             else:
                 return render(self.request, 'registration/invalid_code.html')
-        return redirect('signup')
+        return redirect('registration/authentication.html')
 
 
 class SignupView(CreateView):
     form = CommonSignupForm
     model = User
-    success_url = 'login'
     template_name = 'registration/signup.html'
     fields = ['username', 'email']
+
+    def get_success_url(self):
+        return reverse('confirm_user', kwargs={'pk': self.object.pk})
 
 
 class ProfileView(LoginRequiredMixin, TemplateView):

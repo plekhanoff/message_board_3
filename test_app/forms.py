@@ -1,11 +1,12 @@
 from allauth.account.forms import SignupForm
-from string import hexdigits
-import random
 
 from django.conf import settings
 from django.core.mail import send_mail
 from django.forms import ModelForm, TextInput, Textarea, ClearableFileInput, Select
 from django import forms
+from string import hexdigits
+
+import random
 
 from .models import Article, Comment
 
@@ -13,9 +14,10 @@ from .models import Article, Comment
 class CommonSignupForm(SignupForm):
     def save(self, request):
         user = super(CommonSignupForm, self).save(request)
-        user.is_active = True
+        user.is_active = False
         code = ''.join(random.sample(hexdigits, 5))
         user.code = code
+        user.save()
         send_mail(
             subject=f'Код для активации',
             message=f'Код активации вашего аккаунта: {code}',

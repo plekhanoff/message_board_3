@@ -1,3 +1,4 @@
+
 {% extends 'flatpages/default.html' %}
 {% block content %}
 <h1>Регистрация</h1>
@@ -5,12 +6,5 @@
   {% csrf_token %}
   {{ form.as_p }}
   <button type="submit">Зарегистрироваться</button>
-</form>
-<h1>Подтверждение почты</h1>
-<form method="post" action="{% url 'confirm_user' %}">
-  {% csrf_token %}
-  <label for="code">Введите код высланный вам на почту:</label>
-  <input type="text" name="code">
-  <button type="submit">Confirm</button>
 </form>
 {% endblock %}
