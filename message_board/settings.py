@@ -66,7 +66,7 @@ ROOT_URLCONF = 'message_board.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR,'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -111,7 +111,7 @@ ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_EMAIL_VERIFICATION = 'none'
 ACCOUNT_AUTHENTICATION_METHOD = "email"
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 DEFAULT_FROM_EMAIL = "fertikschloss@yandex.ru"
 EMAIL_HOST = 'smtp.yandex.ru'
 EMAIL_PORT = 465
@@ -172,3 +172,8 @@ CELERY_RESULT_SERIALIZER = 'json'
 
 APSCHEDULER_DATETIME_FORMAT = 'N j, y, f:s a'
 APSCHEDULER_RUN_NOW_TIMEOUT = 25
+
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend'
+]

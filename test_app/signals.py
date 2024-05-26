@@ -1,29 +1,32 @@
-from django.db.models.signals import post_save, pre_save
+from django.core.mail import EmailMultiAlternatives
+from django.db.models.signals import post_save
 from django.dispatch import receiver
-from django.core.mail import send_mail
-from .models import UserResponse
+
+from .models import Article
 
 
-@receiver(pre_save,sender=UserResponse)
-def my_handler(sender,instance,created,**kwargs):
-    if not instance.status:
-        mail = instance.author.email
-        send_mail(
-            'subject here',
-            'Here is the message.',
-            'host@mail.ru',
-            [mail],
-            fail_silently=False,
+@receiver(post_save, sender=Article)
+def update_user_on_article_save(sender, instance, created, **kwargs):
+    if created:
+        emails = Article.objects.filter(
+            category=instance.category
+        ).values_list('email', flat=True)
+
+        subject = f'Новое объявление в категории {instance.category}'
+
+        text_content = (
+            f'Объявление: {instance.title}\n'
+            f'Ссылка на источник : http://127.0.0.1:8000{instance.get_absolute_url()}'
         )
-        return
-    mail = instance.article.author.email
-    send_mail(
-        'subject here',
-        'Here is the message.',
-        'host@mail.ru',
-        [mail],
-        fail_silently=False,
+        html_content = (
+            f'Объявление: {instance.title}<br>'
+            f'<a href="http://127.0.0.1{instance.get_absolute_url()}">'
+            f'Ссылка на источник </a>'
+        )
+        for email in emails:
+            msg = EmailMultiAlternatives(subject, text_content, None, [email])
+            msg.attach_alternative(html_content, "text/html")
+            msg.send()
 
-    )
 
 

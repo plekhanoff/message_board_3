@@ -36,8 +36,14 @@
     <h6> все комментарии :</h6>
     {% for comment in article.comment_set.all %}
     <p> {{ comment.commentUser.username }}</p>
+         {% if comment.author == request.user.author %}
              <h5><a href="{% if comment.pk %}{% url 'comment_edit' pk=comment.pk %}{% endif %}">{{ comment.text }}</a></h5>
+         {% endif %}
     {% endfor %}
     {% endif %}
 {% endblock %}
+
+
+
+
 

@@ -57,3 +57,9 @@ class CommentDeleteForm(forms.ModelForm):
     class Meta:
         model = Comment
         fields = ['text']
+
+
+class ResponseForm(forms.ModelForm):
+    class Meta:
+        model = Comment
+        fields = ['text']

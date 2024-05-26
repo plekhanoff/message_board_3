@@ -1,0 +1,9 @@
+
+{% extends 'flatpages/default.html' %}
+{% block content %}
+  <p>Уведомляем пользователя о прочтении коммнетария</p>
+  <form method="post">
+    {% csrf_token %}
+    <button type="submit">Уведомить</button>
+  </form>
+{% endblock %}

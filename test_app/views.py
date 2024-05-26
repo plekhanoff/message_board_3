@@ -1,5 +1,6 @@
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
-from django.core.mail import EmailMessage
+from django.core.mail import EmailMessage, send_mail
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy, reverse
 from django.views.generic import CreateView, UpdateView, TemplateView, ListView, DetailView, DeleteView, View
@@ -8,7 +9,8 @@ from django.contrib.auth import logout
 from django.http import request, HttpResponseRedirect
 from django.http import Http404
 
-from .forms import ArticleForm, CommonSignupForm, CommentForm, CommentDeleteForm
+from message_board import settings
+from .forms import ArticleForm, CommonSignupForm, CommentForm, CommentDeleteForm, ResponseForm
 
 from .models import Article, Comment, User
 
@@ -38,7 +40,7 @@ class ConfirmUser(UpdateView):
                 user.update(code=None)
             else:
                 return render(self.request, 'registration/invalid_code.html')
-        return redirect('registration/authentication.html')
+        return redirect('account_login')
 
 
 class SignupView(CreateView):
@@ -203,9 +205,31 @@ class CommentDelete(LoginRequiredMixin, DeleteView):
     model = Comment
     form_class = CommentDeleteForm
     template_name = 'test_app/comment_delete.html'
-    success_url = reverse_lazy('index')
+    success_url = reverse_lazy('article_read')
 
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
         self.object.delete()
         return HttpResponseRedirect(self.get_success_url())
+
+
+class Response(LoginRequiredMixin, UpdateView):
+    model = Comment
+    form_class = ResponseForm
+    template_name = 'test_app/response.html'
+    success_url = reverse_lazy('article_detail')
+
+    def form_valid(self, form):
+        self.instance.status = True
+        self.instance.save()
+        # Отправка уведомления
+        comment = self.get_object()
+        subject = 'Комментарий прочитан'
+        message = f'Пользователь {self.request.user.username} прочитал ваш комментарий'
+        recipient_list = [comment.user.email]
+        send_mail(subject, message, settings.EMAIL_HOST_USER, recipient_list)
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        comment = self.get_object()
+        return reverse_lazy('article_detail', kwargs={'article_id': comment.article.id})
