@@ -3,7 +3,8 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.core.mail import EmailMessage, send_mail
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy, reverse
-from django.views.generic import CreateView, UpdateView, TemplateView, ListView, DetailView, DeleteView, View
+from django.views.generic import CreateView, UpdateView, TemplateView, ListView, DetailView, DeleteView, View, \
+    RedirectView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth import logout
 from django.http import request, HttpResponseRedirect
@@ -149,7 +150,7 @@ class ArticleUpdate(LoginRequiredMixin, UpdateView):
         return redirect('article_detail', self.object.pk)
 
 
-class CommentCreate(LoginRequiredMixin,CreateView):
+class CommentCreate(LoginRequiredMixin, CreateView):
     model = Comment
     template_name = 'test_app/comment_create.html'
     form_class = CommentForm
@@ -174,7 +175,7 @@ def send_email(to_email, subject, message):
     email.send()
 
 
-class CommentUpdate(LoginRequiredMixin,UpdateView):
+class CommentUpdate(LoginRequiredMixin, UpdateView):
     permission_required = ('test_app.comment_edit',)
     model = Comment
     form_class = CommentForm
@@ -205,7 +206,7 @@ class CommentDelete(LoginRequiredMixin, DeleteView):
     model = Comment
     form_class = CommentDeleteForm
     template_name = 'test_app/comment_delete.html'
-    success_url = reverse_lazy('article_read')
+    success_url = reverse_lazy('index')
 
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
@@ -213,23 +214,26 @@ class CommentDelete(LoginRequiredMixin, DeleteView):
         return HttpResponseRedirect(self.get_success_url())
 
 
-class Response(LoginRequiredMixin, UpdateView):
-    model = Comment
-    form_class = ResponseForm
-    template_name = 'test_app/response.html'
-    success_url = reverse_lazy('article_detail')
+class Response(LoginRequiredMixin, RedirectView):
+    success_url = reverse_lazy('index')
 
-    def form_valid(self, form):
-        self.instance.status = True
-        self.instance.save()
+    def get_redirect_url(self, *args, **kwargs):
+        pk = kwargs.get('pk', None)
+        self.send_mail(pk)
+
+        return self.success_url
+
+    def send_mail(self, pk):
+        comment = get_object_or_404(
+            Comment,
+            pk=pk
+        )
+
+        comment.status = True
+        comment.save()
+
         # Отправка уведомления
-        comment = self.get_object()
         subject = 'Комментарий прочитан'
         message = f'Пользователь {self.request.user.username} прочитал ваш комментарий'
-        recipient_list = [comment.user.email]
+        recipient_list = [comment.commentUser.email]
         send_mail(subject, message, settings.EMAIL_HOST_USER, recipient_list)
-        return super().form_valid(form)
-
-    def get_success_url(self):
-        comment = self.get_object()
-        return reverse_lazy('article_detail', kwargs={'article_id': comment.article.id})

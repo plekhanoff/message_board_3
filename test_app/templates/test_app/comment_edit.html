@@ -10,17 +10,14 @@
          {% if comment.commentUser == request.user %}
                 {% csrf_token %}
                 <form action="{% url 'comment_edit' pk=comment.pk %}" method="post" enctype="multipart/form-data">
-                <a href="{% url 'comment_delete' pk=comment_id %}"><button><small> Удалить </small></button></a>
+                <a href="{% url 'comment_delete' pk=comment.pk %}"><small> Удалить </small></a>
                 {% csrf_token %}
                 {{ form.text }}<br>
                 <button type="submit">Внести изменения</button>
                 </form>
          {% endif %}
          {% if article.author == request.user.author %}
-                <form action="{% url 'response' pk=comment_id %}" method="post">
-                    {% csrf_token %}
-                    <button type="submit">Уведомить</button>
-                </form>
+                <a href="{% url 'response' comment.pk %}"><button type="submit">Уведомить</button></a>
          {% endif %}
 </body>
 {% endblock %}
