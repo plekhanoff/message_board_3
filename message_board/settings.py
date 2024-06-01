@@ -66,7 +66,7 @@ ROOT_URLCONF = 'message_board.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR,'templates')],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -118,6 +118,9 @@ EMAIL_PORT = 465
 EMAIL_HOST_USER = "fertikschloss@yandex.ru"
 EMAIL_HOST_PASSWORD = "kvlxzxebslvwccby"
 EMAIL_USE_SSL = True
+EMAIL_USE_TLS = False
+SERVER_EMAIL = EMAIL_HOST_USER
+EMAIL_ADMIN = EMAIL_HOST_USER
 
 AUTH_PASSWORD_VALIDATORS = [
     {
